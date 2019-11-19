@@ -77,8 +77,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
           absorbing: _hideStuff,
           child: Column(
             children: <Widget>[
-              _buildTopBar(
-                  backgroundColor, iconColor, barHeight, buttonPadding),
+              _buildTopBar(backgroundColor, iconColor, barHeight, buttonPadding),
               _buildHitArea(),
               _buildBottomBar(backgroundColor, iconColor, barHeight),
             ],
@@ -172,6 +171,42 @@ class _CupertinoControlsState extends State<CupertinoControls> {
     );
   }
 
+  GestureDetector _buildBackButton(
+    Color backgroundColor,
+    Color iconColor,
+    double barHeight,
+    double buttonPadding,
+  ) {
+    return GestureDetector(
+      onTap: _onPop,
+      child: AnimatedOpacity(
+        opacity: _hideStuff ? 0.0 : 1.0,
+        duration: Duration(milliseconds: 300),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10.0),
+          child: BackdropFilter(
+            filter: ui.ImageFilter.blur(sigmaX: 10.0),
+            child: Container(
+              height: barHeight,
+              padding: EdgeInsets.only(
+                left: buttonPadding,
+                right: buttonPadding,
+              ),
+              color: backgroundColor,
+              child: Center(
+                child: Icon(
+                  OpenIconicIcons.arrowBottom,
+                  color: iconColor,
+                  size: 12.0,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   GestureDetector _buildExpandButton(
     Color backgroundColor,
     Color iconColor,
@@ -196,9 +231,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
               color: backgroundColor,
               child: Center(
                 child: Icon(
-                  chewieController.isFullScreen
-                      ? OpenIconicIcons.fullscreenExit
-                      : OpenIconicIcons.fullscreenEnter,
+                  chewieController.isFullScreen ? OpenIconicIcons.fullscreenExit : OpenIconicIcons.fullscreenEnter,
                   color: iconColor,
                   size: 12.0,
                 ),
@@ -263,9 +296,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
                   right: buttonPadding,
                 ),
                 child: Icon(
-                  (_latestValue != null && _latestValue.volume > 0)
-                      ? Icons.volume_up
-                      : Icons.volume_off,
+                  (_latestValue != null && _latestValue.volume > 0) ? Icons.volume_up : Icons.volume_off,
                   color: iconColor,
                   size: 16.0,
                 ),
@@ -292,9 +323,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
           right: 6.0,
         ),
         child: Icon(
-          controller.value.isPlaying
-              ? OpenIconicIcons.mediaPause
-              : OpenIconicIcons.mediaPlay,
+          controller.value.isPlaying ? OpenIconicIcons.mediaPause : OpenIconicIcons.mediaPlay,
           color: iconColor,
           size: 16.0,
         ),
@@ -303,8 +332,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
   }
 
   Widget _buildPosition(Color iconColor) {
-    final position =
-        _latestValue != null ? _latestValue.position : Duration(seconds: 0);
+    final position = _latestValue != null ? _latestValue.position : Duration(seconds: 0);
 
     return Padding(
       padding: EdgeInsets.only(right: 12.0),
@@ -319,9 +347,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
   }
 
   Widget _buildRemaining(Color iconColor) {
-    final position = _latestValue != null && _latestValue.duration != null
-        ? _latestValue.duration - _latestValue.position
-        : Duration(seconds: 0);
+    final position = _latestValue != null && _latestValue.duration != null ? _latestValue.duration - _latestValue.position : Duration(seconds: 0);
 
     return Padding(
       padding: EdgeInsets.only(right: 12.0),
@@ -395,15 +421,10 @@ class _CupertinoControlsState extends State<CupertinoControls> {
       ),
       child: Row(
         children: <Widget>[
-          chewieController.allowFullScreen
-              ? _buildExpandButton(
-                  backgroundColor, iconColor, barHeight, buttonPadding)
-              : Container(),
+          !chewieController.isFullScreen ? _buildBackButton(backgroundColor, iconColor, barHeight, buttonPadding) : Container(),
+          chewieController.allowFullScreen ? _buildExpandButton(backgroundColor, iconColor, barHeight, buttonPadding) : Container(),
           Expanded(child: Container()),
-          chewieController.allowMuting
-              ? _buildMuteButton(controller, backgroundColor, iconColor,
-                  barHeight, buttonPadding)
-              : Container(),
+          chewieController.allowMuting ? _buildMuteButton(controller, backgroundColor, iconColor, barHeight, buttonPadding) : Container(),
         ],
       ),
     );
@@ -424,8 +445,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
 
     _updateState();
 
-    if ((controller.value != null && controller.value.isPlaying) ||
-        chewieController.autoPlay) {
+    if ((controller.value != null && controller.value.isPlaying) || chewieController.autoPlay) {
       _startHideTimer();
     }
 
@@ -436,6 +456,18 @@ class _CupertinoControlsState extends State<CupertinoControls> {
         });
       });
     }
+  }
+
+  void _onPop() {
+    if (controller.value.isPlaying) {
+      _hideStuff = false;
+      _hideTimer?.cancel();
+      controller.pause();
+    } else {
+      _cancelAndRestartTimer();
+    }
+
+    chewieController.popScreen();
   }
 
   void _onExpandCollapse() {
