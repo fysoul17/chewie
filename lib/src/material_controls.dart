@@ -41,10 +41,15 @@ class _MaterialControlsState extends State<MaterialControls> {
               chewieController.videoPlayerController.value.errorDescription,
             )
           : Center(
-              child: Icon(
-                Icons.error,
-                color: Colors.white,
-                size: 42,
+              child: Column(
+                children: <Widget>[
+                  _buildPopButton(),
+                  Icon(
+                    Icons.error,
+                    color: Colors.white,
+                    size: 42,
+                  ),
+                ],
               ),
             );
     }
