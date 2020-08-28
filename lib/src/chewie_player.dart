@@ -8,8 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock/wakelock.dart';
 
-typedef Widget ChewieRoutePageBuilder(
-    BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, _ChewieControllerProvider controllerProvider);
+typedef Widget ChewieRoutePageBuilder(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, _ChewieControllerProvider controllerProvider);
 
 /// A Video Player with Material and Cupertino skins.
 ///
@@ -90,8 +89,7 @@ class ChewieState extends State<Chewie> {
     );
   }
 
-  AnimatedWidget _defaultRoutePageBuilder(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, _ChewieControllerProvider controllerProvider) {
+  AnimatedWidget _defaultRoutePageBuilder(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, _ChewieControllerProvider controllerProvider) {
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget child) {
@@ -119,7 +117,7 @@ class ChewieState extends State<Chewie> {
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     final TransitionRoute<Null> route = PageRouteBuilder<Null>(
-      settings: RouteSettings(isInitialRoute: false),
+      settings: RouteSettings(),
       pageBuilder: _fullScreenRoutePageBuilder,
     );
 
